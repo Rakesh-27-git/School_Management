@@ -3,7 +3,7 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role } from "@/constants/data";
+import { role } from "@/lib/utils";
 import { Announcement, Class } from "@prisma/client";
 import Image from "next/image";
 
@@ -23,10 +23,14 @@ const columns = [
     accessor: "date",
     className: "hidden md:table-cell",
   },
-  {
-    header: "Actions",
-    accessor: "action",
-  },
+  ...(role === "admin"
+    ? [
+        {
+          header: "Actions",
+          accessor: "actions",
+        },
+      ]
+    : []),
 ];
 
 const renderRow = (item: AnnouncementList) => (
@@ -35,7 +39,7 @@ const renderRow = (item: AnnouncementList) => (
     className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
   >
     <td className="flex items-center gap-4 p-4">{item.title}</td>
-    <td>{item.class.name}</td>
+    <td>{item.class?.name || "-"}</td>
     <td className="hidden md:table-cell">{item.date.toDateString()}</td>
     <td>
       <div className="flex items-center gap-2">
@@ -56,8 +60,6 @@ const AnnouncementListPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
   const { data, count, currentPage } = await getAnnouncements(searchParams);
-
-  console.log(data);
 
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">

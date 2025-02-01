@@ -14,21 +14,8 @@ export default function LoginPage() {
   useEffect(() => {
     const role = user?.publicMetadata.role;
     if (isSignedIn) {
-      switch (role) {
-        case "admin":
-          router.push("/admin");
-          break;
-        case "student":
-          router.push("/student");
-          break;
-        case "teacher":
-          router.push("/teacher");
-          break;
-        case "parent":
-          router.push("/parent");
-          break;
-        default:
-          break;
+      if (role) {
+        router.push(`/${role}`);
       }
     }
   }, [user, router, isSignedIn]);

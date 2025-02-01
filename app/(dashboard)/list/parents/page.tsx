@@ -3,7 +3,7 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role } from "@/constants/data";
+import { role } from "@/lib/utils";
 import { Parent, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,10 +30,10 @@ const columns = [
     accessor: "address",
     className: "hidden lg:table-cell",
   },
-  {
+  ...(role === "admin" ?[{
     header: "Actions",
     accessor: "action",
-  },
+  }]:[]),
 ];
 
 const renderRow = (item: ParentList) => (
@@ -102,7 +102,7 @@ const ParentListPage = async ({
             >
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "admin" && <FormModal table="teacher" type="create" />}
+            {role === "admin" && <FormModal table="parent" type="create" />}
           </div>
         </div>
       </div>

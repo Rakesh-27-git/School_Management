@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
+import { currentUserId, role } from "@/lib/utils";
 
 export async function getResults(searchParams: {
   [key: string]: string | undefined;
@@ -31,6 +32,29 @@ export async function getResults(searchParams: {
         }
       }
     }
+  }
+
+  switch (role) {
+    case "admin":
+      break;
+
+    case "teacher":
+      query.OR = [
+        { exam: { lesson: { teacherId: currentUserId! } } },
+        { assignment: { lesson: { teacherId: currentUserId! } } },
+      ];
+      break;
+
+    case "student":
+      query.studentId = currentUserId!;
+      break;
+
+    case "parent":
+      query.student = {
+        parentId: currentUserId!,
+      };
+    default:
+      break;
   }
 
   try {

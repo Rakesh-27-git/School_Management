@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
 
-export async function getClasses(searchParams: {
+export async function  getClasses(searchParams: {
   [key: string]: string | undefined;
 }) {
   const { page, ...queryParams } = await searchParams;

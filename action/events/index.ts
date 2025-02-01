@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
+import { currentUserId, role } from "@/lib/utils";
 
 export async function getEvents(searchParams: {
   [key: string]: string | undefined;
@@ -25,6 +26,19 @@ export async function getEvents(searchParams: {
       }
     }
   }
+
+  const roleConditions: { [key: string]: Prisma.ClassWhereInput } = {
+    teacher: { lessons: { some: { teacherId: currentUserId! } } },
+    student: { students: { some: { id: currentUserId! } } },
+    parent: { students: { some: { parentId: currentUserId! } } },
+  };
+
+  query.OR = [
+    { classId: null },
+    {
+      class: roleConditions[role as keyof typeof roleConditions] || {},
+    },
+  ];
 
   try {
     const [data, count] = await prisma.$transaction([
