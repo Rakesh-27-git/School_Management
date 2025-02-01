@@ -1,5 +1,7 @@
 "use client";
+import { getWeeklyAttendance } from "@/action/student";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -11,35 +13,43 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const data = [
-  {
-    name: "Mon",
-    present: 60,
-    absent: 40,
-  },
-  {
-    name: "Tue",
-    present: 70,
-    absent: 60,
-  },
-  {
-    name: "Wed",
-    present: 90,
-    absent: 75,
-  },
-  {
-    name: "Thu",
-    present: 90,
-    absent: 75,
-  },
-  {
-    name: "Fri",
-    present: 65,
-    absent: 55,
-  },
-];
-
 const AttendanceChart = () => {
+  const [data, setData] = useState([
+    {
+      name: "Mon",
+      present: 0,
+      absent: 0,
+    },
+    {
+      name: "Tue",
+      present: 0,
+      absent: 0,
+    },
+    {
+      name: "Wed",
+      present: 0,
+      absent: 0,
+    },
+    {
+      name: "Thu",
+      present: 0,
+      absent: 0,
+    },
+    {
+      name: "Fri",
+      present: 0,
+      absent: 0,
+    },
+  ]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const attendanceData = await getWeeklyAttendance();
+      setData(attendanceData);
+    };
+    fetchData();
+  }, []);
+
   return (
     <div className="bg-white rounded-lg p-4 h-full">
       <div className="flex justify-between items-center">

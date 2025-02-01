@@ -3,7 +3,9 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
-import { currentUserId, role } from "@/lib/utils";
+import { getCurrentUser} from "@/lib/utils";
+
+const { role,currentUserId } = await getCurrentUser();
 
 export async function getEvents(searchParams: {
   [key: string]: string | undefined;
@@ -65,5 +67,26 @@ export async function getEvents(searchParams: {
       count: 0,
       currentPage: 1,
     };
+  }
+}
+
+// Write a function that fetches the event by Date for EventCalendar component
+
+export async function getCalendarEvents(dateParam: string | undefined) {
+  try {
+    const date = dateParam ? new Date(dateParam) : new Date();
+
+    const data = await prisma.event.findMany({
+      where: {
+        startTime: {
+          gte: new Date(date.setHours(0, 0, 0, 0)),
+          lte: new Date(date.setHours(23, 59, 59, 999)),
+        },
+      },
+    });
+    return data;
+  } catch (error) {
+    console.error("Error fetching event:", error);
+    return null;
   }
 }

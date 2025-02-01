@@ -3,10 +3,12 @@ import FormModal from "@/components/FormModal";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { role } from "@/lib/utils";
+import { getCurrentUser } from "@/lib/utils";
 import { Class, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
+
+const { role } = await getCurrentUser();
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
 

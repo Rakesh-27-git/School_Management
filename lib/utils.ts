@@ -6,6 +6,20 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const { userId, sessionClaims } = await auth();
-export const role = (sessionClaims?.metadata as { role?: string })?.role;
-export const currentUserId = userId;
+export async function getCurrentUser() {
+  try {
+    const { userId, sessionClaims } = await auth();
+    const role = (sessionClaims?.metadata as { role?: string })?.role;
+
+    return {
+      currentUserId: userId,
+      role,
+    };
+  } catch (error) {
+    console.error("Auth error:", error);
+    return {
+      userId: null,
+      role: null,
+    };
+  }
+}

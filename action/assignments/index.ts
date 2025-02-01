@@ -3,7 +3,9 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
-import { currentUserId, role } from "@/lib/utils";
+import { getCurrentUser} from "@/lib/utils";
+
+const { role,currentUserId } = await getCurrentUser();
 
 export async function getAssignments(searchParams: {
   [key: string]: string | undefined;

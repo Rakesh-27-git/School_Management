@@ -1,26 +1,45 @@
 "use client";
+import { getStudentCounts, StudentCounts } from "@/action/student";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts";
 
-const data = [
-  {
-    name: "Total",
-    count: 106,
-    fill: "white",
-  },
-  {
-    name: "Girls",
-    count: 53,
-    fill: "#FAE27C",
-  },
-  {
-    name: "Boys",
-    count: 53,
-    fill: "#C3EBFA",
-  },
-];
-
 const CountChart = () => {
+  const [counts, setCounts] = useState<StudentCounts>({
+    total: 0,
+    boys: 0,
+    girls: 0,
+    boysPercentage: 0,
+    girlsPercentage: 0,
+  });
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      const data = await getStudentCounts();
+      setCounts(data);
+    };
+
+    fetchCounts();
+  }, []);
+
+  const data = [
+    {
+      name: "Total",
+      count: counts.total,
+      fill: "white",
+    },
+    {
+      name: "Girls",
+      count: counts.girls,
+      fill: "#FAE27C",
+    },
+    {
+      name: "Boys",
+      count: counts.boys,
+      fill: "#C3EBFA",
+    },
+  ];
+
   return (
     <div className="bg-white rounded-xl w-full h-full p-4">
       <div className="flex justify-between items-center">
@@ -53,13 +72,17 @@ const CountChart = () => {
       <div className="flex justify-center gap-16">
         <div className="flex flex-col gap-1">
           <div className="w-5 h-5 bg-lamaSky rounded-full" />
-          <h1 className="font-bold">1,234</h1>
-          <h2 className="text-xs text-gray-300">Boys (55%)</h2>
+          <h1 className="font-bold">{counts.boys.toLocaleString()}</h1>
+          <h2 className="text-xs text-gray-300">
+            Boys ({counts.boysPercentage}%)
+          </h2>
         </div>
         <div className="flex flex-col gap-1">
           <div className="w-5 h-5 bg-lamaYellow rounded-full" />
-          <h1 className="font-bold">1,234</h1>
-          <h2 className="text-xs text-gray-300">Girls (45%)</h2>
+          <h1 className="font-bold">{counts.girls.toLocaleString()}</h1>
+          <h2 className="text-xs text-gray-300">
+            Girls ({counts.girlsPercentage}%)
+          </h2>
         </div>
       </div>
     </div>
