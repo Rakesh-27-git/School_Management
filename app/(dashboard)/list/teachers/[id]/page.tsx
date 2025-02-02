@@ -2,9 +2,11 @@ import Announcements from "@/components/Announcements";
 import BigCalendar from "@/components/BigCalendar";
 import FormModal from "@/components/FormModal";
 import Performance from "@/components/Performance";
-import { role } from "@/constants/data";
+import { getCurrentUser } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
+
+const { role } = await getCurrentUser();
 
 const SingleTeacherPage = () => {
   return (
