@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/lib/utils";
 import { Announcement, Class } from "@prisma/client";
 import Image from "next/image";
 
-const { role } = await getCurrentUser();
+const { role } = (await getCurrentUser()) || { role: null };
 
 type AnnouncementList = Announcement & { class: Class };
 

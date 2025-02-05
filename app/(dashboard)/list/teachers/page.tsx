@@ -1,14 +1,17 @@
 import { getTeachers } from "@/action/teacher";
-import FormModal from "@/components/FormModal";
+import FormModalContainer from "@/components/FormModalContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
-import { getCurrentUser } from "@/lib/utils";
+import { auth } from "@clerk/nextjs/server";
+// import { getCurrentUser } from "@/lib/utils";
 import { Class, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
-const { role } = await getCurrentUser();
+// const { role } = await getCurrentUser();
+const { sessionClaims } = await auth();
+const role = (sessionClaims?.metadata as { role?: string })?.role;
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
 
@@ -93,7 +96,7 @@ const renderRow = (item: TeacherList) => (
         </Link>
         {role === "admin" && (
           <>
-            <FormModal table="teacher" type="delete" id={item.id} />
+            <FormModalContainer table="teacher" type="delete" id={item.id} />
           </>
         )}
       </div>
@@ -129,7 +132,9 @@ const TeacherListPage = async ({
             >
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "admin" && <FormModal table="teacher" type="create" />}
+            {role === "admin" && (
+              <FormModalContainer table="teacher" type="create" />
+            )}
           </div>
         </div>
       </div>

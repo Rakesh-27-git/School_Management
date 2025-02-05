@@ -1,5 +1,5 @@
 import { getStudents } from "@/action/student";
-import FormModal from "@/components/FormModal";
+import FormModalContainer from "@/components/FormModalContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -80,7 +80,7 @@ const renderRow = (item: StudentList) => (
           </button>
         </Link>
         {role === "admin" && (
-          <FormModal table="student" type="delete" id={item.id} />
+          <FormModalContainer table="student" type="delete" id={item.id} />
         )}
       </div>
     </td>
@@ -115,7 +115,9 @@ const StudentListPage = async ({
             >
               <Image src="/sort.png" alt="" width={14} height={14} />
             </button>
-            {role === "admin" && <FormModal table="student" type="create" />}
+            {role === "admin" && (
+              <FormModalContainer table="student" type="create" />
+            )}
           </div>
         </div>
       </div>
