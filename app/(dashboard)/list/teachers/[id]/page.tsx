@@ -9,7 +9,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-const SingleTeacherPage = async ({ params }: { params: { id: string } }) => {
+const SingleTeacherPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
   const { role } = await getCurrentUser();
   const { id } = await params;
 
@@ -52,7 +56,11 @@ const SingleTeacherPage = async ({ params }: { params: { id: string } }) => {
               <div className="flex items-center gap-4">
                 <h1 className="text-xl font-semibold">{`${teacher.name} ${teacher.surname}`}</h1>
                 {role === "admin" && (
-                  <FormModalContainer table="teacher" type="update" data={teacher} />
+                  <FormModalContainer
+                    table="teacher"
+                    type="update"
+                    data={teacher}
+                  />
                 )}
               </div>
               <p className="text-sm text-gray-500">

@@ -11,7 +11,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-const SingleStudentPage = async ({ params }: { params: { id: string } }) => {
+const SingleStudentPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
   const { id } = await params;
   const { role } = await getCurrentUser();
 

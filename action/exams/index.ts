@@ -3,15 +3,14 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
-import { getCurrentUser} from "@/lib/utils";
+import { getCurrentUser } from "@/lib/utils";
 
-const { role,currentUserId } = await getCurrentUser();
-
-export async function getExams(searchParams: {
-  [key: string]: string | undefined;
-}) {
+export async function getExams(
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+) {
+  const { role, currentUserId } = await getCurrentUser();
   const { page, ...queryParams } = await searchParams;
-  const currentPage = page ? parseInt(page) : 1;
+  const currentPage = page ? parseInt(page as string) : 1;
 
   const query: Prisma.ExamWhereInput = {};
 
@@ -22,14 +21,14 @@ export async function getExams(searchParams: {
       if (value !== undefined) {
         switch (key) {
           case "classId":
-            query.lesson.classId = parseInt(value);
+            query.lesson.classId = parseInt(value as string);
             break;
           case "teacherId":
-            query.lesson.teacherId = value;
+            query.lesson.teacherId = value as string;
             break;
           case "search":
             query.lesson.subject = {
-              name: { contains: value, mode: "insensitive" },
+              name: { contains: value as string, mode: "insensitive" },
             };
             break;
           default:

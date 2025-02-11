@@ -3,15 +3,14 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
-import { getCurrentUser} from "@/lib/utils";
+import { getCurrentUser } from "@/lib/utils";
 
-const { role,currentUserId } = await getCurrentUser();
-
-export async function getEvents(searchParams: {
-  [key: string]: string | undefined;
-}) {
+export async function getEvents(
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+) {
+  const { role, currentUserId } = await getCurrentUser();
   const { page, ...queryParams } = await searchParams;
-  const currentPage = page ? parseInt(page) : 1;
+  const currentPage = page ? parseInt(page as string) : 1;
 
   const query: Prisma.EventWhereInput = {};
 
@@ -20,7 +19,7 @@ export async function getEvents(searchParams: {
       if (value !== undefined) {
         switch (key) {
           case "search":
-            query.title = { contains: value, mode: "insensitive" };
+            query.title = { contains: value as string, mode: "insensitive" };
             break;
           default:
             break;
@@ -30,17 +29,18 @@ export async function getEvents(searchParams: {
   }
 
   const roleConditions: { [key: string]: Prisma.ClassWhereInput } = {
+    admin: {},
     teacher: { lessons: { some: { teacherId: currentUserId! } } },
     student: { students: { some: { id: currentUserId! } } },
     parent: { students: { some: { parentId: currentUserId! } } },
   };
 
-  query.OR = [
-    { classId: null },
-    {
-      class: roleConditions[role as keyof typeof roleConditions] || {},
-    },
-  ];
+  if (role !== "admin") {
+    query.OR = [
+      { classId: null },
+      { class: roleConditions[role as keyof typeof roleConditions] },
+    ];
+  }
 
   try {
     const [data, count] = await prisma.$transaction([

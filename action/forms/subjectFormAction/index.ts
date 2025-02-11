@@ -90,6 +90,7 @@ export const deleteSubject = async (
   currentState: CurrentState,
   data: FormData
 ) => {
+  console.log(data)
   try {
     const id = parseInt(data.get("id") as string);
 

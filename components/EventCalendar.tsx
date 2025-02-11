@@ -25,6 +25,7 @@ const EventCalendar = () => {
     try {
       const formatedDate = date.toLocaleDateString("en-US");
       const data = await getCalendarEvents(formatedDate);
+      // console.log(data)
       if (data) {
         setEvents(data as Event[]);
       } else {
@@ -40,6 +41,8 @@ const EventCalendar = () => {
       fetchEvents(value);
     }
   }, [value]);
+
+  // console.log(events)
 
   return (
     <div className="bg-white p-4 rounded-md">

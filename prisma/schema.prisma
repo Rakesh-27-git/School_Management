@@ -24,8 +24,8 @@ model Student {
   bloodType   String
   sex         UserSex
   createdAt   DateTime     @default(now())
-  parentId    String
-  parent      Parent       @relation(fields: [parentId], references: [id])
+  parentId    String? // ✅ Make it nullable
+  parent      Parent?      @relation(fields: [parentId], references: [id], onDelete: SetNull)
   classId     Int
   class       Class        @relation(fields: [classId], references: [id])
   gradeId     Int
@@ -184,7 +184,7 @@ enum UserSex {
   FEMALE
 }
 
-enum Day { 
+enum Day {
   MONDAY
   TUESDAY
   WEDNESDAY

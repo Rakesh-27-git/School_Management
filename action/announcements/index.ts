@@ -4,11 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
 
-export async function getAnnouncements(searchParams: {
-  [key: string]: string | undefined;
-}) {
+export async function getAnnouncements(
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+) {
   const { page, ...queryParams } = await searchParams;
-  const currentPage = page ? parseInt(page) : 1;
+  const currentPage = page ? parseInt(page as string) : 1;
 
   const query: Prisma.AnnouncementWhereInput = {};
 
@@ -17,7 +17,10 @@ export async function getAnnouncements(searchParams: {
       if (value !== undefined) {
         switch (key) {
           case "search":
-            query.title = { contains: value, mode: "insensitive" };
+            query.title = {
+              contains: Array.isArray(value) ? value[0] : value,
+              mode: "insensitive",
+            };
             break;
           default:
             break;

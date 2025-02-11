@@ -4,11 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
 
-export async function getParent(searchParams: {
-  [key: string]: string | undefined;
-}) {
+export async function getParent(
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+) {
   const { page, ...queryParams } = await searchParams;
-  const currentPage = page ? parseInt(page) : 1;
+  const currentPage = page ? parseInt(page as string) : 1;
 
   const query: Prisma.ParentWhereInput = {};
 
@@ -18,7 +18,7 @@ export async function getParent(searchParams: {
         switch (key) {
           case "search":
             query.name = {
-              contains: value,
+              contains: value as string,
               mode: "insensitive",
             };
             break;

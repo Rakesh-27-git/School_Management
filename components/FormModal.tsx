@@ -17,6 +17,13 @@ import { FormContainerProps } from "./FormModalContainer";
 import { deleteClass } from "@/action/forms/classFormAction";
 import { deleteTeacher } from "@/action/forms/teacherFormAction";
 import { deleteStudent } from "@/action/forms/studentFormAction";
+import { deleteExam } from "@/action/forms/examFormAction";
+import { deleteLesson } from "@/action/forms/lessonFormAction";
+import { deleteParent } from "@/action/forms/parentFormAction";
+import { deleteAssignment } from "@/action/forms/assignmentFormAction";
+import { deleteAnnouncement } from "@/action/forms/announcementFormAction";
+import { deleteEvent } from "@/action/forms/eventFormAction";
+import { deleteResult } from "@/action/forms/resultFormAction";
 
 const deleteActionMap: {
   [key: string]: (
@@ -28,15 +35,15 @@ const deleteActionMap: {
   class: deleteClass,
   teacher: deleteTeacher,
   student: deleteStudent,
-  // exam: deleteExam,
+  exam: deleteExam,
+  parent: deleteParent,
+  assignment: deleteAssignment,
+  announcement: deleteAnnouncement,
+  event: deleteEvent,
+  lesson: deleteLesson,
+  result: deleteResult,
   // TODO: OTHER DELETE ACTIONS
-  // parent: deleteSubject,
-  // lesson: deleteSubject,
-  // assignment: deleteSubject,
-  // result: deleteSubject,
   // attendance: deleteSubject,
-  // event: deleteSubject,
-  // announcement: deleteSubject,
 };
 
 const StudentForm = dynamic(() => import("./forms/StudentForm"), {
@@ -49,6 +56,27 @@ const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const ClassForm = dynamic(() => import("./forms/ClassForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ExamForm = dynamic(() => import("./forms/ExamForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const LessonForm = dynamic(() => import("./forms/LessonForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ParentForm = dynamic(() => import("./forms/ParentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const EventForm = dynamic(() => import("./forms/EventForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ResultForm = dynamic(() => import("./forms/ResultForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 
@@ -86,6 +114,62 @@ const forms: {
   ),
   class: (setOpen, type, data, relatedData) => (
     <ClassForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  exam: (setOpen, type, data, relatedData) => (
+    <ExamForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  lesson: (setOpen, type, data, relatedData) => (
+    <LessonForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  parent: (setOpen, type, data, relatedData) => (
+    <ParentForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  assignment: (setOpen, type, data, relatedData) => (
+    <AssignmentForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  announcement: (setOpen, type, data, relatedData) => (
+    <AnnouncementForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  event: (setOpen, type, data, relatedData) => (
+    <EventForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  result: (setOpen, type, data, relatedData) => (
+    <ResultForm
       type={type}
       data={data}
       setOpen={setOpen}

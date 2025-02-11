@@ -4,24 +4,26 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
 
-export async function  getClasses(searchParams: {
-  [key: string]: string | undefined;
-}) {
+export async function getClasses(
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+) {
   const { page, ...queryParams } = await searchParams;
-  const currentPage = page ? parseInt(page) : 1;
+  const currentPage = page ? parseInt(page as string) : 1;
 
   const query: Prisma.ClassWhereInput = {};
+
+  console.log(queryParams);
 
   if (queryParams) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
         switch (key) {
           case "supervisorId":
-            query.supervisorId = value;
+            query.supervisorId = value as string;
             break;
           case "search":
             query.name = {
-              contains: value,
+              contains: value as string,
               mode: "insensitive",
             };
             break;

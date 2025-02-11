@@ -7,46 +7,46 @@ import { getCurrentUser } from "@/lib/utils";
 import { Class, Grade, Teacher } from "@prisma/client";
 import Image from "next/image";
 
-const { role } = await getCurrentUser();
-
 type ClassList = Class & { grade: Grade } & { supervisor: Teacher };
-
-const columns = [
-  {
-    header: "Class Name",
-    accessor: "name",
-  },
-  {
-    header: "Capacity",
-    accessor: "capacity",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Grade",
-    accessor: "grade",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Supervisor",
-    accessor: "supervisor",
-    className: "hidden md:table-cell",
-  },
-  ...(role === "admin"
-    ? [
-        {
-          header: "Actions",
-          accessor: "action",
-        },
-      ]
-    : []),
-];
 
 const ClassListPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
+  const { role } = await getCurrentUser();
+
   const { data, count, currentPage } = await getClasses(searchParams);
+
+  const columns = [
+    {
+      header: "Class Name",
+      accessor: "name",
+    },
+    {
+      header: "Capacity",
+      accessor: "capacity",
+      className: "hidden md:table-cell",
+    },
+    {
+      header: "Grade",
+      accessor: "grade",
+      className: "hidden md:table-cell",
+    },
+    {
+      header: "Supervisor",
+      accessor: "supervisor",
+      className: "hidden md:table-cell",
+    },
+    ...(role === "admin"
+      ? [
+          {
+            header: "Actions",
+            accessor: "action",
+          },
+        ]
+      : []),
+  ];
 
   const renderRow = (item: ClassList) => (
     <tr

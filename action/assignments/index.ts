@@ -3,15 +3,15 @@
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
-import { getCurrentUser} from "@/lib/utils";
+import { getCurrentUser } from "@/lib/utils";
 
-const { role,currentUserId } = await getCurrentUser();
+const { role, currentUserId } = await getCurrentUser();
 
-export async function getAssignments(searchParams: {
-  [key: string]: string | undefined;
-}) {
+export async function getAssignments(
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+) {
   const { page, ...queryParams } = await searchParams;
-  const currentPage = page ? parseInt(page) : 1;
+  const currentPage = page ? parseInt(page as string) : 1;
 
   const query: Prisma.AssignmentWhereInput = {};
 
@@ -22,14 +22,14 @@ export async function getAssignments(searchParams: {
       if (value !== undefined) {
         switch (key) {
           case "classId":
-            query.lesson.classId = parseInt(value);
+            query.lesson.classId = parseInt(value as string);
             break;
           case "teacherId":
-            query.lesson.teacherId = value;
+            query.lesson.teacherId = value as string;
             break;
           case "search":
             query.lesson.subject = {
-              name: { contains: value, mode: "insensitive" },
+              name: { contains: value as string, mode: "insensitive" },
             };
             break;
           default:
@@ -60,7 +60,7 @@ export async function getAssignments(searchParams: {
           some: {
             parentId: currentUserId!,
           },
-        }, 
+        },
       };
       break;
     default:

@@ -1,5 +1,5 @@
 import { getAnnouncements } from "@/action/announcements";
-import FormModal from "@/components/FormModal";
+import FormModalContainer from "@/components/FormModalContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
@@ -7,60 +7,68 @@ import { getCurrentUser } from "@/lib/utils";
 import { Announcement, Class } from "@prisma/client";
 import Image from "next/image";
 
-const { role } = (await getCurrentUser()) || { role: null };
-
 type AnnouncementList = Announcement & { class: Class };
-
-const columns = [
-  {
-    header: "Title",
-    accessor: "title",
-  },
-  {
-    header: "Class",
-    accessor: "class",
-  },
-  {
-    header: "Date",
-    accessor: "date",
-    className: "hidden md:table-cell",
-  },
-  ...(role === "admin"
-    ? [
-        {
-          header: "Actions",
-          accessor: "actions",
-        },
-      ]
-    : []),
-];
-
-const renderRow = (item: AnnouncementList) => (
-  <tr
-    key={item.id}
-    className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
-  >
-    <td className="flex items-center gap-4 p-4">{item.title}</td>
-    <td>{item.class?.name || "-"}</td>
-    <td className="hidden md:table-cell">{item.date.toDateString()}</td>
-    <td>
-      <div className="flex items-center gap-2">
-        {role === "admin" && (
-          <>
-            <FormModal table="announcement" type="update" data={item} />
-            <FormModal table="announcement" type="delete" id={item.id} />
-          </>
-        )}
-      </div>
-    </td>
-  </tr>
-);
 
 const AnnouncementListPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
+  const { role } = await getCurrentUser();
+
+  const columns = [
+    {
+      header: "Title",
+      accessor: "title",
+    },
+    {
+      header: "Class",
+      accessor: "class",
+    },
+    {
+      header: "Date",
+      accessor: "date",
+      className: "hidden md:table-cell",
+    },
+    ...(role === "admin"
+      ? [
+          {
+            header: "Actions",
+            accessor: "actions",
+          },
+        ]
+      : []),
+  ];
+
+  const renderRow = (item: AnnouncementList) => (
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
+    >
+      <td className="flex items-center gap-4 p-4">{item.title}</td>
+      <td>{item.class?.name || "-"}</td>
+      <td className="hidden md:table-cell">{item.date.toDateString()}</td>
+      <td>
+        <div className="flex items-center gap-2">
+          {role === "admin" && (
+            <>
+              <FormModalContainer
+                table="announcement"
+                type="update"
+                data={item}
+              />
+              <FormModalContainer
+                table="announcement"
+                type="delete"
+                id={item.id}
+              />
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+
   const { data, count, currentPage } = await getAnnouncements(searchParams);
 
   return (
@@ -87,7 +95,7 @@ const AnnouncementListPage = async ({
               <Image src="/sort.png" alt="Sort" width={14} height={14} />
             </button>
             {role === "admin" && (
-              <FormModal table="announcement" type="create" />
+              <FormModalContainer table="announcement" type="create" />
             )}
           </div>
         </div>

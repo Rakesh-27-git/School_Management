@@ -58,6 +58,7 @@ export const updateTeacher = async (
   currentState: CurrentState,
   data: TeacherSchema
 ) => {
+  console.log(data)
   if (!data) {
     return { success: false, error: true, message: "No data provided" };
   }
@@ -114,7 +115,7 @@ export const updateTeacher = async (
         };
       }
     }
-    console.log("Error in updateTeacher", error);
+    console.log("Error in updateTeacher", (error as Error).message);
     return { success: false, error: true, message: "Error updating teacher" };
   }
 };

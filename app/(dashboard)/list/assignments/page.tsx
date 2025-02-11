@@ -1,13 +1,11 @@
 import { getAssignments } from "@/action/assignments";
-import FormModal from "@/components/FormModal";
+import FormModalContainer from "@/components/FormModalContainer";
 import Pagination from "@/components/Pagination";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import { getCurrentUser } from "@/lib/utils";
 import { Assignment, Class, Subject, Teacher } from "@prisma/client";
 import Image from "next/image";
-
-const { role } = await getCurrentUser();
 
 type AssignmentList = Assignment & {
   lesson: {
@@ -16,64 +14,76 @@ type AssignmentList = Assignment & {
     teacher: Teacher;
   };
 };
-const columns = [
-  {
-    header: "Subject Name",
-    accessor: "name",
-  },
-  {
-    header: "Class",
-    accessor: "class",
-  },
-  {
-    header: "Teacher",
-    accessor: "teacher",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Due Date",
-    accessor: "dueDate",
-    className: "hidden md:table-cell",
-  },
-  ...(role === "admin" || role === "teacher"
-    ? [
-        {
-          header: "Actions",
-          accessor: "action",
-        },
-      ]
-    : []),
-];
-
-const renderRow = (item: AssignmentList) => (
-  <tr
-    key={item.id}
-    className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
-  >
-    <td className="flex items-center gap-4 p-4">{item.lesson.subject.name}</td>
-    <td>{item.lesson.class.name}</td>
-    <td className="hidden md:table-cell">{`${item.lesson.teacher.name} ${item.lesson.teacher.surname}`}</td>
-    <td className="hidden md:table-cell">
-      {item.dueDate.toLocaleDateString()}
-    </td>
-    <td>
-      <div className="flex items-center gap-2">
-        {(role === "admin" || role === "teacher") && (
-          <>
-            <FormModal table="exam" type="update" data={item} />
-            <FormModal table="exam" type="delete" id={item.id} />
-          </>
-        )}
-      </div>
-    </td>
-  </tr>
-);
 
 const AssignmentListPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
+  const { role } = await getCurrentUser();
+
+  const columns = [
+    {
+      header: "Subject Name",
+      accessor: "name",
+    },
+    {
+      header: "Class",
+      accessor: "class",
+    },
+    {
+      header: "Teacher",
+      accessor: "teacher",
+      className: "hidden md:table-cell",
+    },
+    {
+      header: "Due Date",
+      accessor: "dueDate",
+      className: "hidden md:table-cell",
+    },
+    ...(role === "admin" || role === "teacher"
+      ? [
+          {
+            header: "Actions",
+            accessor: "action",
+          },
+        ]
+      : []),
+  ];
+
+  const renderRow = (item: AssignmentList) => (
+    <tr
+      key={item.id}
+      className="border-b border-gray-200 even:bg-slate-50 text-sm hover:bg-lamaPurpleLight"
+    >
+      <td className="flex items-center gap-4 p-4">
+        {item.lesson.subject.name}
+      </td>
+      <td>{item.lesson.class.name}</td>
+      <td className="hidden md:table-cell">{`${item.lesson.teacher.name} ${item.lesson.teacher.surname}`}</td>
+      <td className="hidden md:table-cell">
+        {item.dueDate.toLocaleDateString()}
+      </td>
+      <td>
+        <div className="flex items-center gap-2">
+          {(role === "admin" || role === "teacher") && (
+            <>
+              <FormModalContainer
+                table="assignment"
+                type="update"
+                data={item}
+              />
+              <FormModalContainer
+                table="assignment"
+                type="delete"
+                id={item.id}
+              />
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
   const { data, count, currentPage } = await getAssignments(searchParams);
   return (
     <div className="bg-white p-4 rounded-md flex-1 m-4 mt-0">
@@ -99,7 +109,7 @@ const AssignmentListPage = async ({
               <Image src="/sort.png" alt="Sort" width={14} height={14} />
             </button>
             {(role === "admin" || role === "teacher") && (
-              <FormModal table="assignment" type="create" />
+              <FormModalContainer table="assignment" type="create" />
             )}
           </div>
         </div>

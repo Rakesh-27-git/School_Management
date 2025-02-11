@@ -4,11 +4,11 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { ITEM_PER_PAGE } from "@/constants";
 
-export async function getTeachers(searchParams: {
-  [key: string]: string | undefined;
-}) {
+export async function getTeachers(
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+) {
   const { page, ...queryParams } = await searchParams;
-  const currentPage = page ? parseInt(page) : 1;
+  const currentPage = page ? parseInt(page as string) : 1;
 
   const query: Prisma.TeacherWhereInput = {};
 
@@ -19,13 +19,13 @@ export async function getTeachers(searchParams: {
           case "classId":
             query.lessons = {
               some: {
-                classId: parseInt(value),
+                classId: parseInt(value as string),
               },
             };
             break;
           case "search":
             query.name = {
-              contains: value,
+              contains: value as string, 
               mode: "insensitive",
             };
         }
